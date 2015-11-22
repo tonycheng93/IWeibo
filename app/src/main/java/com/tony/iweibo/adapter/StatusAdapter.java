@@ -18,6 +18,7 @@ import com.tony.iweibo.entity.PicUrls;
 import com.tony.iweibo.entity.Status;
 import com.tony.iweibo.entity.User;
 import com.tony.iweibo.utils.DateUtils;
+import com.tony.iweibo.utils.ImageOptHelper;
 import com.tony.iweibo.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -114,8 +115,9 @@ public class StatusAdapter extends BaseAdapter {
         //bind data
         final Status status = (Status) getItem(position);
         User user = status.getUser();
-        mImageLoader.displayImage(user.getProfile_image_url(), viewHolder.iv_avatar);
-        viewHolder.tv_subhead.setText(user.getName());
+//        viewHolder.iv_avatar.setTag(user.getId());
+        mImageLoader.displayImage(user.getProfile_image_url(), viewHolder.iv_avatar,ImageOptHelper.getAvatarOptions());
+        viewHolder.tv_subhead.setText(Html.fromHtml("<font color = '#FFCC00'>" + user.getName() + "</font>"));
         viewHolder.tv_caption.setText(DateUtils.getShortTime(status.getCreated_at())
                 + " 来自 " + Html.fromHtml(status.getSource()));
         viewHolder.tv_content.setText(StringUtils.getWeiboContent(mContext, viewHolder.tv_content,

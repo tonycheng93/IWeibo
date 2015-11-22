@@ -1,6 +1,7 @@
 package com.tony.iweibo.adapter;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -16,6 +17,8 @@ import com.tony.iweibo.R;
 import com.tony.iweibo.entity.PicUrls;
 import com.tony.iweibo.entity.Status;
 import com.tony.iweibo.entity.User;
+import com.tony.iweibo.utils.DateUtils;
+import com.tony.iweibo.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,9 +116,10 @@ public class StatusAdapter extends BaseAdapter {
         User user = status.getUser();
         mImageLoader.displayImage(user.getProfile_image_url(), viewHolder.iv_avatar);
         viewHolder.tv_subhead.setText(user.getName());
-        viewHolder.tv_caption.setText(status.getCreated_at()
-                + " 来自 " + status.getSource());
-        viewHolder.tv_content.setText(status.getText());
+        viewHolder.tv_caption.setText(DateUtils.getShortTime(status.getCreated_at())
+                + " 来自 " + Html.fromHtml(status.getSource()));
+        viewHolder.tv_content.setText(StringUtils.getWeiboContent(mContext, viewHolder.tv_content,
+                status.getText()));
 
         setImages(status, viewHolder.include_status_image, viewHolder.gv_images, viewHolder.iv_image);
 
@@ -124,8 +128,10 @@ public class StatusAdapter extends BaseAdapter {
             User retUser = retweeted_status.getUser();
 
             viewHolder.include_retweeted_status.setVisibility(View.VISIBLE);
-            viewHolder.tv_retweeted_content.setText("@" + retUser.getName() + ":"
-                    + retweeted_status.getText());
+            String retweetedContent = "@" + retUser.getName() + ":"
+                    + retweeted_status.getText();
+            viewHolder.tv_retweeted_content.setText(StringUtils.getWeiboContent(mContext,
+                    viewHolder.tv_retweeted_content, retweetedContent));
 
             setImages(retweeted_status,
                     viewHolder.include_retweeted_status_image,

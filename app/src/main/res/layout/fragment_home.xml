@@ -7,9 +7,9 @@
 
     <include layout="@layout/include_titlebar"/>
     <!-- TODO: Update blank fragment layout -->
-    <ListView
-        android:id="@+id/lv_home"
-        style="@style/ListViewCommon"
+
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
+        android:id="@+id/plv_home"
         android:dividerHeight="8dp"
-        ></ListView>
+        style="@style/ListViewCommon"></com.handmark.pulltorefresh.library.PullToRefreshListView>
 </LinearLayout>

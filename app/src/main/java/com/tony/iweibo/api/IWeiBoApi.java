@@ -90,4 +90,36 @@ public class IWeiBoApi extends WeiboAPI {
         parameters.add("page", page);
         requestInMainLooper(URLs.statusesHome_timeline, parameters, HTTPMETHOD_GET, listener);
     }
+
+    /**
+     * 根据微博ID返回某条微博的评论列表
+     *
+     * @param id
+     *            需要查询的微博ID。
+     * @param page
+     *            返回结果的页码。(单页返回的记录条数，默认为50。)
+     * @param listener
+     */
+    public void commentsShow(long id, long page, RequestListener listener) {
+        WeiboParameters params = new WeiboParameters();
+        params.add("id", id);
+        params.add("page", page);
+        requestInMainLooper(URLs.commentsShow, params , WeiboAPI.HTTPMETHOD_GET, listener);
+    }
+
+    /**
+     * 对一条微博进行评论
+     *
+     * @param id
+     *            需要评论的微博ID。
+     * @param comment
+     *            评论内容
+     * @param listener
+     */
+    public void commentsCreate(long id, String comment, RequestListener listener) {
+        WeiboParameters params = new WeiboParameters();
+        params.add("id", id);
+        params.add("comment", comment);
+        requestInMainLooper(URLs.commentsCreate, params , WeiboAPI.HTTPMETHOD_POST, listener);
+    }
 }

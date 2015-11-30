@@ -1,6 +1,7 @@
 package com.tony.iweibo.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,15 +12,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.tony.iweibo.R;
+import com.tony.iweibo.activity.StatusDetailActivity;
+import com.tony.iweibo.activity.WriteCommentActivity;
 import com.tony.iweibo.entity.PicUrls;
 import com.tony.iweibo.entity.Status;
 import com.tony.iweibo.entity.User;
 import com.tony.iweibo.utils.DateUtils;
 import com.tony.iweibo.utils.ImageOptHelper;
 import com.tony.iweibo.utils.StringUtils;
+import com.tony.iweibo.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +120,7 @@ public class StatusAdapter extends BaseAdapter {
         //bind data
         final Status status = (Status) getItem(position);
         User user = status.getUser();
-//        viewHolder.iv_avatar.setTag(user.getId());
+        viewHolder.iv_avatar.setTag(user.getId());
         mImageLoader.displayImage(user.getProfile_image_url(), viewHolder.iv_avatar,ImageOptHelper.getAvatarOptions());
         viewHolder.tv_subhead.setText(Html.fromHtml("<font color = '#FFCC00'>" + user.getName() + "</font>"));
         viewHolder.tv_caption.setText(DateUtils.getShortTime(status.getCreated_at())
@@ -125,7 +130,7 @@ public class StatusAdapter extends BaseAdapter {
 
         setImages(status, viewHolder.include_status_image, viewHolder.gv_images, viewHolder.iv_image);
 
-        Status retweeted_status = status.getRetweeted_status();
+        final Status retweeted_status = status.getRetweeted_status();
         if (retweeted_status != null) {
             User retUser = retweeted_status.getUser();
 
@@ -150,6 +155,46 @@ public class StatusAdapter extends BaseAdapter {
 
         viewHolder.tv_like_bottom.setText(status.getAttitudes_count() == 0 ?
                 "赞" : status.getAttitudes_count() + "");
+
+        viewHolder.ll_card_content.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, StatusDetailActivity.class);
+                intent.putExtra("status", status);
+                mContext.startActivity(intent);
+            }
+        });
+        viewHolder.include_retweeted_status.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, StatusDetailActivity.class);
+                intent.putExtra("status", retweeted_status);
+                mContext.startActivity(intent);
+            }
+        });
+        viewHolder.ll_share_bottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToastUtils.showToast(mContext, "转个发~", Toast.LENGTH_SHORT);
+            }
+        });
+
+        viewHolder.ll_comment_bottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(status.getComments_count() > 0) {
+                    Intent intent = new Intent(mContext, StatusDetailActivity.class);
+                    intent.putExtra("status", status);
+                    intent.putExtra("scroll2Comment", true);
+                    mContext.startActivity(intent);
+                } else {
+                    Intent intent = new Intent(mContext, WriteCommentActivity.class);
+                    intent.putExtra("status", status);
+                    mContext.startActivity(intent);
+                }
+                ToastUtils.showToast(mContext, "评个论~", Toast.LENGTH_SHORT);
+            }
+        });
         return convertView;
     }
 
@@ -169,7 +214,7 @@ public class StatusAdapter extends BaseAdapter {
             gv_images.setVisibility(View.GONE);
             iv_image.setVisibility(View.VISIBLE);
 
-            mImageLoader.displayImage(thumbnail_pic, iv_image);
+            mImageLoader.displayImage(thumbnail_pic, iv_image,ImageOptHelper.getImgOptions());
         } else {
             imgContaniner.setVisibility(View.GONE);
         }
